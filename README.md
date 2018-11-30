@@ -1,14 +1,17 @@
 
-# Decision tree for regression 
+# Regression with CART Trees - Code Along
 
 ## Introduction
 Decision tree is a supervised machine learning model that can be used both for classification and regression tasks. We have seen that a decision tree uses a tree structure to predict an output class for a given input example in a classification task. For regression analysis, In the tree, each path from the root node to a leaf node represents a decision path that ends in a predicted value. In this lesson , we shall see how regression is performed in using a decision tree regressor using a simple example.  
 
+Note: Kindly visit the [Official doc.](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html) for the regressor tree function used in this lesson. 
+
+
 ## Objectives
 You will be able to:
-- 
-- 
-- 
+- Understand and explain recursive partitioning 
+- Understand the maths behind recursive partitioning of sample space by CART trees
+- Run a simple regression experiment with regression trees and evaluate/visualize the results
 
 ## Recursive Partitioning 
 
@@ -39,9 +42,13 @@ The tree correctly represents the interaction between Horsepower and Wheelbase, 
 Once we train the tree, the local models are completely understood,  so all the effort should go into finding a good partitioning of the data. 
 
 ### CART training algorithm 
-In this lab we will focus on the *CART* algorithm (Classification and Regression Trees) for *regression*. The CART algorithm builds a *binary tree* in which every non-leaf node has exactly two children (corresponding to a yes/no answer). 
+In this lab we will focus on the *CART* algorithm (Classification and Regression Trees) for *regression*. 
 
-Given a set of training examples and their labels, the algorithm repeatedly splits the training examples $D$ into two subsets $D_{left}, D_{right}$ using some feature $f$ and feature threshold $t_f$ such that samples with the same label are grouped together. At each node, the algorithm selects the split $\theta = (f, t_f)$ that produces the smallest *mean squared error* (MSE) (alternatively, we could use the mean absolute error).
+>The CART algorithm builds a *binary tree* in which every non-leaf node has exactly two children (corresponding to a yes/no answer). 
+
+Given a set of training examples and their labels, the algorithm repeatedly splits the training examples $D$ into two subsets $D_{left}, D_{right}$ using some feature set $f$ and feature threshold $t_f$ such that samples with the same label are grouped together. 
+
+At each node, the algorithm selects the split $\theta = (f, t_f)$ that produces the smallest *mean squared error* (MSE) (alternatively, we could use the mean absolute error).
 
 So at each step, the algorithm selects the parameters $\theta$ that minimize the following cost function:
 
@@ -61,7 +68,7 @@ After building the tree, new examples can be classified by navigating through th
 
 ### Mean Squared Error (MSE)
 
-When performing regression (i.e. the target values are continuous) we can evaluate a split using its MSE. The MSE of node $m$ is computed as follows:
+When performing regression with CART trees (i.e. the target values are continuous) we can evaluate a split using its MSE. The MSE of node $m$ is computed as follows:
 
 \begin{equation}
 \hat{y}_m = \frac{1}{n_{m}} \sum_{i \in D_m} y_i
@@ -74,22 +81,33 @@ MSE_m = \frac{1}{n_{m}} \sum_{i \in D_m} (y_i - \hat{y}_m)^2
 - $n_{m}$ : total number of training examples in node $m$
 - $y_i$: target value of $i-$th example
 
+Let's see above in action with a simple experiment. We shall generate some non-linear synthetic data for our X and y attributes and fit it to a regression tree. So let's move ahead with this. In order to have a visual understanding of how this works, we shall only a simple regression problem between two variables X and y , where y is a simple function of X that we want to learn. Let's see this below:
+
+## Genarate Data
 
 ```python
+# Import libraries
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 plt.style.use('seaborn')
 np.random.seed(124)
 
+#Generate 100 examples of X and y(a simple cubic function of X ). 
 X = np.linspace(-3, 3, 100)
 y = X ** 3 + np.random.randn(100)
 
+# Plot the data 
 plt.figure(figsize=(15,6))
 plt.scatter(X, y)
 plt.title("Simple quadratic dataset with noise")
 plt.xlabel("Feature values")
 plt.ylabel("Target values")
+```
+
+
+```python
+# Code here
 ```
 
 
@@ -100,20 +118,26 @@ plt.ylabel("Target values")
 
 
 
-![png](index_files/index_6_1.png)
+![png](index_files/index_7_1.png)
 
 
+You can try and further complicate the relationship with a more complex function.  Let's now create our features and labels, and also peform a 75/25 split sfor the training and test set. 
 
 ```python
-X = X[:, np.newaxis]
-
 # Split the data into a training and test set
+X = X[:, np.newaxis]
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
+# Print the data dimensions
 print(f'Shape X_train: {X_train.shape}')
 print(f'Shape y_train: {y_train.shape}')
 print(f'Shape X_test: {X_test.shape}')
 print(f'Shape y_test: {y_test.shape}')
+```
+
+
+```python
+# Code here 
 ```
 
     Shape X_train: (75, 1)
@@ -122,12 +146,19 @@ print(f'Shape y_test: {y_test.shape}')
     Shape y_test: (25,)
 
 
+## Fit a Regression Tree
+scikit learn offers a regression tree under the class `DecisionTreeRegressor`. Let's create an instance of this class just like the classification tasks and fit the data. For now , we'll set the max depth parameter to 3, as we now know that increasing this could lead to overfitting. We can experiment with different depths later. 
 
 ```python
 # Fitting Decision Tree Regression to the dataset
 from sklearn.tree import DecisionTreeRegressor
-regressor = DecisionTreeRegressor(random_state = 0, max_depth=3)
+regressor = DecisionTreeRegressor(random_state = 10, max_depth=3)
 regressor.fit(X_train, y_train)
+```
+
+
+```python
+# Code here 
 ```
 
 
@@ -137,82 +168,102 @@ regressor.fit(X_train, y_train)
                max_leaf_nodes=None, min_impurity_decrease=0.0,
                min_impurity_split=None, min_samples_leaf=1,
                min_samples_split=2, min_weight_fraction_leaf=0.0,
-               presort=False, random_state=0, splitter='best')
+               presort=False, random_state=10, splitter='best')
 
 
 
+## Prediction and Evaluation
 
-```python
-y_pred = regressor.predict(X_test)
-
-```
-
-
+So we see above, the default values for most hyperparameters. Kindly check the official doc for details on options available to you for growing regression trees. We can now predict labels with previously unseen data and calculate mse. As an extra measure , we can also look at calculating the R-squared value to inspect the goodness of fit for our model. 
 ```python
 from sklearn.metrics import mean_squared_error as mse
-mse(y_test, y_pred)
+from sklearn.metrics import r2_score
+
+# Make predictions and evaluate 
+y_pred = regressor.predict(X_test)
+print ('MSE score:', mse(y_test, y_pred))
+print('R-sq score:',r2_score(y_test,y_pred))
 ```
-
-
-
-
-    5.165993713178738
-
-
 
 
 ```python
-from sklearn.metrics import r2_score
-
-r2_score(y_test,y_pred)
-
+# Code here 
 ```
 
+    MSE score: 5.165993713178738
+    R-sq score: 0.9620185253771402
 
 
-
-    0.9620185253771402
-
-
-
+## Visualize the Model Fit
+Our R squared score tells us that this appears to be a very good fit (remember r2 ranges from 0(poor) to 1(best)). Let's visualize the learnt function below with our scatter plot from earlier and see how well it fits.
 
 ```python
 # Visualising the Decision Tree Regression results (higher resolution)
 X_grid = np.arange(min(X), max(X), 0.01)
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.figure(figsize=(15,6))
-plt.scatter(X, y, color = 'red')
-plt.plot(X_grid, regressor.predict(X_grid), color = 'blue')
+plt.scatter(X, y, color = 'red', label='data')
+plt.plot(X_grid, regressor.predict(X_grid), color = 'green', label='Regression function')
 plt.title('Decision Tree Regression')
-plt.xlabel('X')
-plt.ylabel('Y')
+plt.xlabel('Features')
+plt.ylabel('Target')
+plt.legend()
 plt.show()
 ```
 
 
-![png](index_files/index_12_0.png)
+```python
+# Code here 
+```
 
+
+![png](index_files/index_15_0.png)
+
+
+So we have learnt this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
+
+__Try changing the `max_depth` parameter in the model and grow the tree again. The resulting visualization will clearly show you the impact of tree depth on overfitting.__
+
+## Visualize the Tree
+We can also visualize regression trees as before using the `graphviz` library. Let's bring in our code from previous lesson and see how the tree has grown.
+
+```python
+# Visualising the Decision Tree Regression results (higher resolution)
+X_grid = np.arange(min(X), max(X), 0.01)
+X_grid = X_grid.reshape((len(X_grid), 1))
+plt.figure(figsize=(15,6))
+plt.scatter(X, y, color = 'red', label='data')
+plt.plot(X_grid, regressor.predict(X_grid), color = 'green', label='Regression function')
+plt.title('Decision Tree Regression')
+plt.xlabel('Features')
+plt.ylabel('Target')
+plt.legend()
+plt.show()
+```
 
 
 ```python
-from sklearn.externals.six import StringIO  
-from IPython.display import Image  
-from sklearn.tree import export_graphviz
-import pydotplus
-
-dot_data = StringIO()
-export_graphviz(regressor, out_file=dot_data, filled=True, rounded=True,special_characters=True)
-graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.create_png())
+# Code here
 ```
 
 
 
 
-![png](index_files/index_13_0.png)
+![png](index_files/index_17_0.png)
 
 
 
-### Caveats
+## Caveats
 
-Without regularization, decision trees are likely to overfit the training examples. This can be prevented using techniques like *pruning* or by providing a maximum allowed tree depth and/or a minimum number of samples required to split a node further.
+Without regularization, decision trees are likely to overfit the training examples. This can be prevented using techniques like *pruning* or by providing a maximum allowed tree depth and/or a minimum number of samples required to split a node further as we saw with regression. 
+
+## Additional Resources
+
+- [An Introduction to Recursive Partitioning: Rationale, Application and Characteristics of Classification and Regression Trees, Bagging and Random Forests](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2927982/)
+- [CART: Classification And Regression Trees for Machine Learning](https://machinelearningmastery.com/classification-and-regression-trees-for-machine-learning/)
+- [Popular Decision Tree: Classification and Regression Trees (C&RT)](http://www.statsoft.com/Textbook/Classification-and-Regression-Trees)
+- [Youtube: CART trees](https://www.youtube.com/watch?v=DCZ3tsQIoGU)
+
+## Summary 
+
+In this lesson, we learnt about CART trees for regression and classification. We looked at how CART algorithm works, along with MSE , as a loss measure used as a learning mechanism. We saw a simple experiment with some synthetic data  where we used a tree regressor to learn a non linear function. We saw that this approach is much simpler and computationally efficient than using non-linear regression functions. 
