@@ -1,6 +1,4 @@
 
-https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html
-
 # Decision tree for regression 
 
 ## Introduction
