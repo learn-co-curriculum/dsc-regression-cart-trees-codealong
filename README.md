@@ -222,6 +222,12 @@ plt.show()
 
 So we have learnt this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
 
+### Some Observations
+
+- We can notice the graph is not continuous.
+- Horizontal lines are averages of all data points in sections created.
+- These horizontal lines represent sections. Predictions are averages of data points in sections. So prediction for each value lying in one section will be the same.
+
 __Try changing the `max_depth` parameter in the model and grow the tree again. The resulting visualization will clearly show you the impact of tree depth on overfitting.__
 
 ## Visualize the Tree
