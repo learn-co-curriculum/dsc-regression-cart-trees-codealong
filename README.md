@@ -1,5 +1,5 @@
 
-# Regression with CART Trees - Code Along
+# Regression with CART Trees
 
 ## Introduction
 Decision tree is a supervised machine learning model that can be used both for classification and regression tasks. We have seen that a decision tree uses a tree structure to predict an output class for a given input example in a classification task. For regression analysis, In the tree, each path from the root node to a leaf node represents a decision path that ends in a predicted value. In this lesson , we shall see how regression is performed in using a decision tree regressor using a simple example.  
