@@ -117,10 +117,6 @@ plt.ylabel("Target values")
 
 
 
-
-![png](index_files/index_7_1.png)
-
-
 You can try and further complicate the relationship with a more complex function.  Let's now create our features and labels, and also peform a 75/25 split sfor the training and test set. 
 
 ```python
@@ -234,17 +230,15 @@ __Try changing the `max_depth` parameter in the model and grow the tree again. T
 We can also visualize regression trees as before using the `graphviz` library. Let's bring in our code from previous lesson and see how the tree has grown.
 
 ```python
-# Visualising the Decision Tree Regression results (higher resolution)
-X_grid = np.arange(min(X), max(X), 0.01)
-X_grid = X_grid.reshape((len(X_grid), 1))
-plt.figure(figsize=(15,6))
-plt.scatter(X, y, color = 'red', label='data')
-plt.plot(X_grid, regressor.predict(X_grid), color = 'green', label='Regression function')
-plt.title('Decision Tree Regression')
-plt.xlabel('Features')
-plt.ylabel('Target')
-plt.legend()
-plt.show()
+# Visualize the decision tree using graph viz library 
+from sklearn.externals.six import StringIO  
+from IPython.display import Image  
+from sklearn.tree import export_graphviz
+import pydotplus
+dot_data = StringIO()
+export_graphviz(regressor, out_file=dot_data, filled=True, rounded=True,special_characters=True)
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
+Image(graph.create_png())
 ```
 
 
