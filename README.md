@@ -2,7 +2,8 @@
 # Regression with CART Trees
 
 ## Introduction
-Decision tree is a supervised machine learning model that can be used both for classification and regression tasks. We have seen that a decision tree uses a tree structure to predict an output class for a given input example in a classification task. For regression analysis, In the tree, each path from the root node to a leaf node represents a decision path that ends in a predicted value. In this lesson , we shall see how regression is performed in using a decision tree regressor using a simple example.  
+
+As we've learned, a Decision Tree is a supervised machine learning model that can be used both for classification and regression tasks. We have seen that a decision tree uses a tree structure to predict an output class for a given input example in a classification task. For regression analysis, In the tree, each path from the root node to a leaf node represents a decision path that ends in a predicted value. In this lesson , we shall see how regression is performed in using a decision tree regressor using a simple example.  
 
 Note: Kindly visit the [Official doc.](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html) for the regressor tree function used in this lesson. 
 
@@ -17,25 +18,21 @@ You will be able to:
 
 Linear regression is considered a __global model__ as there is a single model holding over the entire sample space. For data containing complex features holding complicated and nonlinear relations, assembling such a single global model can be very difficult and computationally expensive task. 
 
-An alternative approach to nonlinear regression is to __partition the sample space into smaller regions__, as we have already seen with classification trees. For regression, we partition the sub-divisions again until we get the regions in space that can be targeted using simple models. This is known as  called recursive partitioning. 
+Another way to handle to nonlinear regressions is to __partition the sample space into smaller regions__, as we have already seen in previous lessons with classification trees. This isn't much different in regression--here, our goal is partition down to increasingly smaller, simpler subsets until we can fit simple linear regression models to them. Since each subset is a partition of a smaller subset that is itself a subset, this makes it a textbook example of **_Recursive Partioning_**.
 
-> The global model has two parts: one is just the __recursive partition__, the other is a simple model for each unit of the partition.
-
-In regression trees , each of the terminal nodes, or leaves, of the tree represents a __cell of the partition__, and associates a simple model to this cell. A point x belongs to a leaf if x falls in the corresponding cell of the partition. We start at the root node of the tree as before  and ask a sequence of questions about the features. Internal nodes are labeled with questions, and the edges between them are labeled by the answers. Each question refers to only a single attribute, and has a yes or no answer, e.g.,
-“Is distance > 50?” or “Is Sex == Female?”. That’s the recursive partition part. 
+Recall that in classification trees, the leaf nodes (the deepest nodes, at the end of each particular path) are the ones that contained the purest overall subsets of the data. Regression Trees work a bit differently, but the general idea is still the same. With Regression Trees , each leaf node of the tree represents a __cell of the partition__. These cells are the smallest unit where a simple regression can be fit to the data accurately.  Splitting the data still works the same way as we saw in previous lessons for classification--we use our tree model to continuously subset down to smaller, more specific subsets until we reach a level where we can build the simplest regression to the most specific subset in our data. For example, a regression tree may recursively partition the model down further and further until it gets all customers over the age of 50 residing in Florida with an income over #60k/year, and then fit a simple regression to only the data points that fit within this specific subset. 
 
 
 ## Simple Local Models
-For classic regression trees, the model in each cell is just a constant estimate of Y . 
 
-For points (xi, yi),(x2, y2), . . .(xc, yc) are all the samples belonging to a leaf-node . Then our model for this leaf node l is just the sample mean of the dependent variable in that cell. This is a piecewise-constant
-model. There are several advantages to this including faster predictions with simpler calculations, easy to understand and interpret models. 
+One point worth noting is that the simple regression models for each partition aren't being used as regressions in real-time. Instead, they take the sample mean of the dependent variable for that partition. Whenever the model makes a prediction, it uses this sample mean rather than calculating the actual regression model. In practice, this works quite well, and has some distinct advantages. Models are easier to interpret, and faster to use for **_inference_** (making predictions) since they are just retrieving the stored mean value rather than calculating the actual output of the regression. 
 
-Consider the Regression tree below which predicts the price of cars showing an interaction between wheelbase and horsepower: 
-<img src="dt1.png" width=400>
 
-Next, we shall look at the partition of the sample space implied by the regression tree from the figure above. Notice that all the dividing lines are parallel to the axes, because each internal node checks whether a single variable is above or below a given value.
-<img src="dt2.png" width=400>
+This is more easily understood when visualized. Consider the Regression tree below, which predicts the price of cars based on wheelbase and horsepower: 
+<img src="images/dt1.png" width=400>
+
+Once we have created a decision tree, we can visualize the decision boundaries of that tree (assuming that the dimensionality is small enough for visualization). Notice that all the dividing lines are parallel to the axes, because each internal node checks whether a single variable is above or below a given value. In simpler terms, all decision boundaries with decision trees will always be horizontal or vertical if visualized--there are no diagonal, wavy, or curvy lines, because of the nature of the boolean (true/false) logic used by decision trees to determine the splits! 
+<img src="images/dt2.png" width=400>
 
 The tree correctly represents the interaction between Horsepower and Wheelbase, i.e. when Horsepower > 0.6, Wheelbase no longer matters. When both are equally important, the tree switches between them. 
 
@@ -85,8 +82,10 @@ Let's see above in action with a simple experiment. We shall generate some non-l
 
 ## Genarate Data
 
+Run the cell below to generate the data for this lesson. 
+
+
 ```python
-# Import libraries
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -106,21 +105,16 @@ plt.ylabel("Target values")
 ```
 
 
-```python
-# Code here
-```
+
+
+    Text(0, 0.5, 'Target values')
 
 
 
+You can try and further complicate the relationship with a more complex function.  Let's now create our features and labels, and also perform a 75/25 split sfor the training and test set. 
 
-    Text(0,0.5,'Target values')
-
-
-
-You can try and further complicate the relationship with a more complex function.  Let's now create our features and labels, and also peform a 75/25 split sfor the training and test set. 
 
 ```python
-# Split the data into a training and test set
 X = X[:, np.newaxis]
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
@@ -131,30 +125,20 @@ print(f'Shape X_test: {X_test.shape}')
 print(f'Shape y_test: {y_test.shape}')
 ```
 
-
-```python
-# Code here 
-```
-
     Shape X_train: (75, 1)
     Shape y_train: (75,)
     Shape X_test: (25, 1)
     Shape y_test: (25,)
-
+    
 
 ## Fit a Regression Tree
-scikit learn offers a regression tree under the class `DecisionTreeRegressor`. Let's create an instance of this class just like the classification tasks and fit the data. For now , we'll set the max depth parameter to 3, as we now know that increasing this could lead to overfitting. We can experiment with different depths later. 
+Scikit-learn offers a regression tree under the class `DecisionTreeRegressor`. Let's create an instance of this class just like the classification tasks and fit the data. For now , we'll set the max depth parameter to 3, as we now know that increasing this could lead to overfitting. We can experiment with different depths later. 
+
 
 ```python
-# Fitting Decision Tree Regression to the dataset
 from sklearn.tree import DecisionTreeRegressor
 regressor = DecisionTreeRegressor(random_state = 10, max_depth=3)
 regressor.fit(X_train, y_train)
-```
-
-
-```python
-# Code here 
 ```
 
 
@@ -170,7 +154,11 @@ regressor.fit(X_train, y_train)
 
 ## Prediction and Evaluation
 
-So we see above, the default values for most hyperparameters. Kindly check the official doc for details on options available to you for growing regression trees. We can now predict labels with previously unseen data and calculate mse. As an extra measure , we can also look at calculating the R-squared value to inspect the goodness of fit for our model. 
+The output of the cell above shows us the default values for most hyperparameters. You are encouraged to check the official documentation for this class for details on options available to you for growing regression trees! 
+
+We can now predict labels with previously unseen data and calculate mse. As an extra measure , we can also look at calculating the R-squared value to inspect the goodness of fit for our model. 
+
+
 ```python
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import r2_score
@@ -181,20 +169,15 @@ print ('MSE score:', mse(y_test, y_pred))
 print('R-sq score:',r2_score(y_test,y_pred))
 ```
 
-
-```python
-# Code here 
-```
-
     MSE score: 5.165993713178738
     R-sq score: 0.9620185253771402
-
+    
 
 ## Visualize the Model Fit
 Our R squared score tells us that this appears to be a very good fit (remember r2 ranges from 0(poor) to 1(best)). Let's visualize the learnt function below with our scatter plot from earlier and see how well it fits.
 
+
 ```python
-# Visualising the Decision Tree Regression results (higher resolution)
 X_grid = np.arange(min(X), max(X), 0.01)
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.figure(figsize=(15,6))
@@ -208,12 +191,7 @@ plt.show()
 ```
 
 
-```python
-# Code here 
-```
-
-
-![png](index_files/index_15_0.png)
+![png](output_15_0.png)
 
 
 So we have learnt this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
@@ -226,36 +204,9 @@ So we have learnt this regression line without using any complex non-linear func
 
 __Try changing the `max_depth` parameter in the model and grow the tree again. The resulting visualization will clearly show you the impact of tree depth on overfitting.__
 
-## Visualize the Tree
-We can also visualize regression trees as before using the `graphviz` library. Let's bring in our code from previous lesson and see how the tree has grown.
-
-```python
-# Visualize the decision tree using graph viz library 
-from sklearn.externals.six import StringIO  
-from IPython.display import Image  
-from sklearn.tree import export_graphviz
-import pydotplus
-dot_data = StringIO()
-export_graphviz(regressor, out_file=dot_data, filled=True, rounded=True,special_characters=True)
-graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-Image(graph.create_png())
-```
-
-
-```python
-# Code here
-```
-
-
-
-
-![png](index_files/index_17_0.png)
-
-
-
 ## Caveats
 
-Without regularization, decision trees are likely to overfit the training examples. This can be prevented using techniques like *pruning* or by providing a maximum allowed tree depth and/or a minimum number of samples required to split a node further as we saw with regression. 
+Without **regularization**, decision trees are likely to overfit the training examples. This can be prevented using techniques like *pruning* or by providing a maximum allowed tree depth and/or a minimum number of samples required to split a node further as we saw with regression. 
 
 ## Additional Resources
 
