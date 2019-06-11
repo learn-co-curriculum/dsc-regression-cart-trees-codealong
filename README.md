@@ -129,7 +129,7 @@ print(f'Shape y_test: {y_test.shape}')
     Shape y_train: (75,)
     Shape X_test: (25, 1)
     Shape y_test: (25,)
-    
+
 
 ## Fit a Regression Tree
 Scikit-learn offers a regression tree under the class `DecisionTreeRegressor`. Let's create an instance of this class just like the classification tasks and fit the data. For now , we'll set the max depth parameter to 3, as we now know that increasing this could lead to overfitting. We can experiment with different depths later. 
@@ -171,7 +171,7 @@ print('R-sq score:',r2_score(y_test,y_pred))
 
     MSE score: 5.165993713178738
     R-sq score: 0.9620185253771402
-    
+
 
 ## Visualize the Model Fit
 Our R squared score tells us that this appears to be a very good fit (remember r2 ranges from 0(poor) to 1(best)). Let's visualize the learnt function below with our scatter plot from earlier and see how well it fits.
@@ -191,10 +191,10 @@ plt.show()
 ```
 
 
-![png](output_15_0.png)
+![png](index_files/index_14_0.png)
 
 
-So we have learnt this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
+So we found this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
 
 ### Some Observations
 
@@ -217,4 +217,4 @@ Without **regularization**, decision trees are likely to overfit the training ex
 
 ## Summary 
 
-In this lesson, we learnt about CART trees for regression and classification. We looked at how CART algorithm works, along with MSE , as a loss measure used as a learning mechanism. We saw a simple experiment with some synthetic data  where we used a tree regressor to learn a non linear function. We saw that this approach is much simpler and computationally efficient than using non-linear regression functions. 
+In this lesson, you learned about CART trees for regression and classification. You looked at how CART algorithm works, along with MSE, as a loss measure used as a learning mechanism. You saw a simple experiment with some synthetic data  where we used a tree regressor to learn a non linear function. You learned that this approach is much simpler and computationally efficient than using non-linear regression functions. 
