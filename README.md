@@ -1,4 +1,3 @@
-
 # Regression with CART Trees
 
 ## Introduction
@@ -92,7 +91,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
 from sklearn.model_selection import train_test_split
-plt.style.use('seaborn')
+plt.style.use('seaborn-v0_8-dark')
 np.random.seed(124)
 
 # Generate 100 examples of X and y (a simple cubic function of X) 
@@ -109,7 +108,9 @@ plt.show()
 ```
 
 
+    
 ![png](index_files/index_6_0.png)
+    
 
 
 Let's now create our features and labels, and also perform a 75/25 split for the training and test sets: 
@@ -194,7 +195,9 @@ plt.show()
 ```
 
 
+    
 ![png](index_files/index_14_0.png)
+    
 
 
 We found this regression line without using any complex non-linear functions, in a fraction of time. This is the key benefit of regression trees over other regression techniques that we have seen earlier. 
