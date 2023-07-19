@@ -178,7 +178,7 @@ Our R-squared score tells us that this appears to be a very good fit (remember $
 
 
 ```python
-X_grid = np.arange(min(X), max(X), 0.01)
+X_grid = np.linspace(min(X), max(X))
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.figure(figsize=(15,6))
 plt.scatter(X, y, color = 'red', label='data')
